@@ -1,0 +1,32 @@
+---
+title: "Attitudes toward the adoption of two AI-enabled mental health tools among prospective psychotherapists"
+#bibliography: "../../config/AI_Attitudes.bib"
+csl: "../../config/apa.csl"
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: true
+  include: false
+prefer-html: true
+author: "Anne-Kathrin Kleine, Eesha Kokje, Eva Lermer, & Susanne Gaube"
+format: 
+  docx:
+    reference-doc: "../../config/template_word.docx"
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+```
+
+# Simulation
+
+```{r}
+
+```
+
