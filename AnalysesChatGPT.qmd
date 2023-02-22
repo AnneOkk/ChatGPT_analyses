@@ -1,9 +1,9 @@
 ---
-title: "Attitudes toward the adoption of two AI-enabled mental health tools among prospective psychotherapists"
+title: "Do emergency physicians perform as gastroenterology consultants when given AI clinical decision support through ChatGPT?"
 #bibliography: "../../config/AI_Attitudes.bib"
 csl: "../../config/apa.csl"
 execute:
-  echo: false
+  echo: true
   warning: false
   message: false
   cache: true
@@ -11,8 +11,8 @@ execute:
 prefer-html: true
 author: "Anne-Kathrin Kleine, Eesha Kokje, Eva Lermer, & Susanne Gaube"
 format: 
-  docx:
-    reference-doc: "../../config/template_word.docx"
+  #docx:
+    #reference-doc: "../../config/template_word.docx"
   html:
     toc: true
     toc-depth: 3
@@ -24,9 +24,321 @@ format:
 set.seed(42)
 ```
 
+# Metadata
+
+## Title: 
+
+Do emergency physicians perform as gastroenterology consultants when given AI clinical decision support through ChatGPT?
+
+## Description:
+
+Patients who present with complex conditions to the emergency department (ED) may require consultation from medical or surgical specialists to make accurate diagnoses and to propose appropriate management. Rural and smaller hospitals may not necessarily have access to specialists at all times or even at all, which may increase the risks of missed diagnoses and or delay the initiation of appropriate therapy. Even in larger EDs, specialists may not be immediately available to assist in case management, especially outside of regular hours or on weekends. 
+
+Emergency physicians faced with these constraints may benefit from the use of clinical decision support systems (CDSSs) which incorporate patient-specific data to provide recommendations to the clinician in real-time3.  As examples, computerized clinical knowledge systems like UpToDate (Wolters-Kluwer, Alphen aan den Rijn, NL) were developed to provide clinicians quick access to medical information at the point-of-care2.  More recently, the emergence of artificial intelligence (AI) enabled clinical decision support systems (AI-CDSS) have been developed for a variety of applications. AI-CDSS has the advantage of traditional CDSS of being able to leverage the power of AI or machine learning (ML) in its decision- making, rather than being simply algorithmically programmed to follow expert medical knowledge. However, there is limited research on the ability of AI-CDSS tools to improve physician diagnostic performance and patient outcomes in a real- world setting. 
+
+Open AI’s ChatGPT is a Natural Language Processing (NLP) Large Language Model (LLM) developed by OpenAI, designed to generate human-like responses to text inputs.  It is the most rapidly adopted web application in history, recording a utilization rate exceeding one million unique users in just seven days. It is built on the Transformer architecture, a Ddeep Nneural Nnetwork (DNN) architecture for processing sequential data, such as natural language text. It was trained on massive amounts of text data encompassing a broad spectrum of data sources, including literary works, periodicals, and conversational transcripts. As a result of this extensive training, the ChatGPT system is capable of comprehending a wide array of subjects and situational contexts.  It uses a combination of DNNsdeep neural networks and attention mechanisms to generate responses that are contextually appropriate and coherent. As such, it can be immediately and seamlessly integrated into clinical workflows in diverse clinical settings. 
+
+Recently, ChatGPT was investigated as a clinical decision support tool to provide differential diagnoses on de-identified clinical cases, and performed well at providing differential diagnoses with high accuracy. As such, ChatGPT may have the ability to serve as a reasonable substitute for a specialist consultation in settings where access to specialists is limited.  
+
+Patients with gastroenterologic disease may require time-sensitive diagnosis and institution of treatment. For example, patients with gastrointestinal bleeding (GIB) require an accurate and prompt assessment to determine the need, timing, and modality of endoscopy, as well as medical management to reduce the risk of complications. Failure to institute a proper management plan in a timely fashion may increase the risk of morbidity and mortality. There is potentially a role for AI-powered LLMs like ChatGPT to assist clinicians in making these time-sensitive diagnoses and institute appropriate management, though this has not been previously assessed.
+
+The purpose of this study was to determine whether providing emergency physicians (- non-task expert clinicians in gastroenterology) - with access to a ChatGPT- generated diagnosis and management plan - improves the diagnostic accuracy and management plan compared with those made by non-expert clinicians in the absence of ChatGPT support. Additionally, we planned to investigate whether clinical advice from ChatGPT improves the performance of non-task expert physicians to a level comparable to that of task expert physicians.
+
+# Study information 
+
+## Hypotheses:
+
+*Hypothesis 1*: Gastroenterology consultants will demonstrate higher accuracy in a) diagnosis, b) differential diagnosis, and c) treatment management plan when compared with emergency physicians.
+
+*Hypothesis 2*: The accuracy of a) diagnosis, b) differential diagnosis, and c) treatment management plan will be higher among gastroenterology consultants and emergency physicians after receiving ChatGPT diagnostic information. 
+
+*Hypothesis 3*: There will be an interaction between the expert status of the participants and receiving ChatGPT diagnostic information, in that the increase in accuracy of a) diagnosis, b) differential diagnosis, and c) treatment management plan will be higher among emergency physicians compared to gastroenterology consultants.
+
+
+# Design plan 
+
+## Study type:
+
+- Experiment
+
+## Blinding:
+
+- No blinding is involved in this study.
+
+## Is there any additional blinding in this study?
+
+Experts in the field will compare the a) diagnosis, b) differential diagnosis, and c) treatment management plan to gold standards while remaining blind to the participants' professional group and whether or not the answers were given before or after ChatGPT diagnostic advice was received.
+
+## Study design: 
+
+Between and within subjects design. 
+
+## Randomization:
+
+No randomization is required because all participants will receive ChatGPT advice. 
+
+# Sampling plan 
+
+## Existing data:
+
+Registration prior to creation of data.
+
+## Explanation of existing data:
+
+NA
+
+## Data collection procedures: 
+
+[PLEASE ADD!]
+
+## Sample size:
+
+The results of the simulation study suggest that at least 50 emergency physicians and 50 gastroenterology consultants should be included to reach a power of > 80%. 
+
+## Sample size rationale:
+
+Please see power analysis. 
+
+## Stopping rule:
+
+Data will be collected until a sufficient sample size is reached (please see attached simulation study).
+
+# Variables
+
+## Manipulated variables:
+
+Presentation of ChatGPT diagnostic advice at T2. 
+
+## Measured variables:
+
+### Dependent variables:
+
+- accuracy of most likeluy diagnosis
+- accuracy of differential diagnosis
+- accuracy of treatment management plan 
+
+### Independent variables: 
+
+- professional group 
+- time 
+
+### Within-subjects variable
+
+- case 
+
+### Covariates (between-subjects):
+
+- age
+- gender
+- professional autonomy beliefs
+- subjective expert knowledge 
+- AI attitudes
+
+
+# Analysis plan
+
+## Statistical models:
+
+Please see attached simulation study for details. 
+
+## Transformations:
+
+Scaling of continuous variables.  
+
+## Inference criteria:
+
+Confidence intervals and p-values. 
+
+## Missing data: 
+
+We use complete observations.  
+
+# Other
+
+## Other 
+
+NA.
+
 # Simulation
 
 ```{r}
-
+library(tidyverse)
 ```
+
+## Simulate aggregated data 
+
+```{r}
+library(lavaan)
+library(LMest)
+library(wakefield)
+library(tidyverse)
+model <- 'diag_like_em_pr =~ diag_like_em_pre
+          diag_like_em_pre ~~ 1.5*diag_like_em_pre
+          diag_like_em_pre ~ 3.5*1
+          
+          diag_like_ge_pr =~ diag_like_ge_pre
+          diag_like_ge_pre ~~ 1.5*diag_like_ge_pre
+          
+          diag_like_em_po =~ diag_like_em_post
+          diag_like_em_post ~~ 1.5*diag_like_em_post
+          
+          diag_like_ge_po =~ diag_like_ge_post
+          diag_like_ge_post ~~ 1.5*diag_like_ge_post
+          
+          diag_diff_em_pr =~ diag_diff_em_pre
+          diag_diff_em_pre ~~ 1.5*diag_diff_em_pre
+  
+          diag_diff_ge_pr =~ diag_diff_ge_pre
+          diag_diff_ge_pre ~~ 1.5*diag_diff_ge_pre 
+          
+          diag_diff_em_po =~ diag_diff_em_post
+          diag_diff_em_post ~~ 1.5*diag_diff_em_post
+  
+          diag_diff_ge_po =~ diag_diff_ge_post
+          diag_diff_ge_post ~~ 1.5*diag_diff_ge_post
+          
+          manage_em_pr =~ manage_em_pre
+          manage_em_pre ~~ 1.5*manage_em_pre
+          
+          manage_ge_pr =~ manage_ge_pre
+          manage_ge_pre ~~ 1.5*manage_ge_pre
+          
+          manage_em_po =~ manage_em_post
+          manage_em_post ~~ 1.5*manage_em_post
+          
+          manage_ge_po =~ manage_ge_post
+          manage_ge_post ~~ 1.5*manage_ge_post
+          
+          conf_em_pr =~ conf_em_pre
+          conf_em_pre ~~ 1.5*conf_em_pre
+          
+          conf_ge_pr =~ conf_ge_pre
+          conf_ge_pre ~~ 1.5*conf_ge_pre
+          
+          conf_em_po =~ conf_em_post
+          conf_em_post ~~ 1.5*conf_em_post
+          
+          conf_ge_po =~ conf_ge_post
+          conf_ge_post ~~ 1.5*conf_ge_post
+          
+          eff_em_pr =~ eff_em_pre
+          eff_em_pre ~~ 1.5*eff_em_pre
+          
+          eff_ge_pr =~ eff_ge_pre
+          eff_ge_pre ~~ 1.5*eff_ge_pre
+          
+          eff_em_po =~ eff_em_post
+          eff_em_post ~~ 1.5*eff_em_post
+          
+          eff_ge_po =~ eff_ge_post
+          eff_ge_post ~~ 1.5*eff_ge_post
+          '
+data <- simulateData(model = model, model.type = "cfa", sample.nobs = 1000L, # 10 times (ten cases) 100 participants
+    return.type = "data.frame")
+
+data <- data[rep(seq_len(nrow(data)), each = 2), ]
+
+data$id <- rep(1:100, 20)
+data$case <- rep(rep(1:10, each = 100), 2)
+
+ages <- age(100, x = 18:89, prob = NULL, name = "Age")
+data$age_1 <- rep(rep(ages, 10), 2)
+
+genders <- sample(1:3, replace = T, size = 100, prob = c(0.45, 0.45, 0.1))
+data$gender <- rep(rep(genders, 10),2)
+
+adj_like <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$adj_like <- adj_like
+
+adj_diff <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$adj_diff <- adj_diff
+
+adj_manage <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$adj_manage <- adj_manage
+
+recomm <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$recomm <- recomm
+
+autonomy <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$autonomy <- autonomy
+
+know_exp <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$know_exp <- know_exp
+          
+attitude <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
+data$attitude <- attitude  
+ 
+```
+
+
+```{r}
+time <- rep(1:2, each = 1000)
+group <- rep(rep(c("emergency", "gastro"), each = 50), 20)
+
+data$time = time
+data$group = group
+```
+
+```{r}
+#| include: true
+library(summarytools)
+dfSummary(data)
+```
+
+
+## Create fixed and random effects
+
+```{r}
+fixed <- c(1.5, # intercept
+          1.1, # group effect (slope))
+          0.8, # time effect (slope)
+          0.2, # age effect
+          0.1, # gender effect
+          0.5, # autonomy effect
+          0.5, # expert effect
+          0.2, # attitude effect,
+          0.5 # group * time effect
+          ) 
+
+rand <- list(0.5, 0.1) # Random intercepts for participants clustered by cases
+
+res <- 2 # residual variance
+```
+
+## Create the model
+
+```{r}
+#| include: true
+library(simr)
+model <- makeLmer(y ~ group*time + age_1 + gender + autonomy + know_exp + attitude + (1|case/id), fixef=fixed, VarCorr=rand, sigma=res, data=data)
+model
+```
+## Power analysis
+
+```{r}
+#| include: true
+sim <- powerSim(model, nsim=100, test = fcompare(y~ group + time + age_1 + gender + autonomy + know_exp + attitude))
+sim
+```
+## Add more participants 
+```{r}
+#| include: true
+model_ext_subj <- extend(model, within="case+group+time", n=60)
+model_ext_subj
+
+sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(y~ group + time + age_1 + gender + autonomy + know_exp + attitude))
+sim_treat_subj
+```
+## Show how power develops depending on participant number (per group)
+
+```{r}
+#| include: true
+p_curve_treat <- powerCurve(model_ext_subj, test=fcompare(y~ group + time + age_1 + gender + autonomy + know_exp + attitude), within="case+group+time", breaks=c(15,30,45,60))
+plot(p_curve_treat)
+```
+
+
+
+
+
 
