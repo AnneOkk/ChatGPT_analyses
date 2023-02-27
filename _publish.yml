@@ -1,0 +1,4 @@
+- source: AnalysesChatGPT.qmd
+  quarto-pub:
+    - id: 0d101c40-c1a0-4164-bb25-97c2492b4dad
+      url: 'https://quartopub.com/sites/anneokk/chatgpt_diagnosticadvice'

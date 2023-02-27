@@ -1,0 +1,16 @@
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+lavaan
+LMest
+wakefield
+summarytools
+Matrix
+lme4
+simr
