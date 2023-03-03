@@ -48,7 +48,7 @@ The purpose of this study was to determine whether providing emergency physician
 
 ## Hypotheses:
 
-*Hypothesis 1*: Gastroenterology consultants will demonstrate higher accuracy in a) diagnosis, b) differential diagnosis, and c) treatment management plan when compared with emergency physicians before receiving ChatHPT diagnostic advice. 
+*Hypothesis 1*: Gastroenterology consultants will demonstrate higher accuracy in a) diagnosis, b) differential diagnosis, and c) treatment management plan when compared with emergency physicians before receiving ChatGPT diagnostic advice. 
 
 *Hypothesis 2*: There will be a positive interaction between the expert status of the participants and receiving ChatGPT diagnostic advice, in that the increase in accuracy of a) diagnosis, b) differential diagnosis, and c) treatment management plan will be higher among emergency physicians compared to gastroenterology consultants after receiving ChatGPT diagnostic advice vs. before receiving ChatGPT diagnostic advice.
 
@@ -292,6 +292,10 @@ library(summarytools)
 dfSummary(data)
 ```
 
+```{r}
+data_red <- data %>% filter(time ==2 )
+```
+
 
 ## Create fixed and random effects
 
@@ -301,21 +305,19 @@ dfSummary(data)
 
 # chatgpt recommendation quality on within level (ChatGPT * group)
 
-fixed <- c(5.5, # intercept
-           0.3, # experience effect
-           -0.09, # autonomy effect
-          0.07, # AI expert effect
-          0.13, # AI attitude effect
-          -0.2, # group effect (slope for emergency))
-          0.3, # time effect (slope)
-          0.3, # Quality effect
-          0.06, # group * time effect
-          0.05 # group * quality effect
+fixed <- c(2.5, # intercept of the change score
+           -0.04, # experience effect (Professional experience (years))
+           -0.07, # autonomy effect (Beliefs about professional autonomy)
+          0.10, # AI expert effect (Self-reported AI-knowledge)
+          0.04, # AI attitude effect (Attitude toward AI)
+          0.25, # Quality effect (explainability) 
+          0.24, # group effect (slope for emergency) (Task expertise (experts: radiologists))
+          0.02 # group * quality effect
           ) 
 
-rand <- list(0.8, 0.9, 0.4, 0.3, 0.2, 0.1) # Random intercepts and slopes
+rand <-  list(0.06, 0.52) # Random intercepts and slopes
 
-res <- 0.9 # residual variance
+res <- 0.72 # residual variance
 ```
 
 ## Create the model
@@ -324,80 +326,42 @@ res <- 0.9 # residual variance
 #| include: true
 library(simr)
 library(future)
-model <- makeLmer(diag_like_em_post ~  experience + autonomy + know_exp + attitude + group*time + group*quality + (1 + quality + time|id), fixef=fixed, VarCorr=rand, sigma=res, data=data)
+# diag_like_em_post = change score 
+model <- makeLmer(diag_like_em_change ~ experience + autonomy + know_exp + attitude + quality*group + (1|id) + (1|quality), fixef=fixed, VarCorr=rand, sigma=res, data=data_red)
 model
 
-#model <- lme4::lmer(diag_like_em_post ~  experience + autonomy + know_exp + attitude + group*time + group*quality + (1 + quality + time|id), data=data)
+#model <- lme4::lmer(diag_like_em_post ~ experience + autonomy + know_exp + attitude + quality + group + (group|quality) + (1|id), data=data)
 #model
-
 ```
 
 ## Power analysis
 
 ```{r}
 #| include: true
-sim %<-% powerSim(model, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
+sim <- powerSim(model, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + quality + group + (1|id) + (1|quality)))
+
+
 sim
 ```
 
+
+```{r}
 ## Add more participants 
-
-
-```{r}
-#| include: true
-model_ext_subj <- extend(model, within="case+group+time", n=51)
-model_ext_subj
-
-sim_treat_subj %<-% powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
-sim_treat_subj
-```
-
-
-
-
-
-```{r}
-#| include: true
-model_ext_subj <- extend(model, within="case+group+time", n=60)
-model_ext_subj
-
-sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
-sim_treat_subj
-```
-
-```{r}
-#| include: true
-model_ext_subj <- extend(model, within="case+group+time", n=65)
-model_ext_subj
-
-sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
-sim_treat_subj
-```
-
-
-```{r}
-#| include: true
-model_ext_subj <- extend(model, within="case+group+time", n=70)
-model_ext_subj
-
-sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
-sim_treat_subj
-```
-
-```{r}
 #| include: true
 model_ext_subj <- extend(model, within="case+group+time", n=80)
 model_ext_subj
 
-sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)))
+sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + quality + group + (1+group|quality) + (1|id) + (1|group:id)))
 sim_treat_subj
 ```
+
+
 
 ## Show how power develops depending on participant number (per group)
 
 ```{r}
 #| include: true
-p_curve_treat <- powerCurve(model_ext_subj, nsim = 100, test=fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + group + time + quality + (1 + quality + time|id)), within="case+group+time", breaks=c(30,45,60, 70, 80))
+p_curve_treat <- powerCurve(model, nsim = 100, test=fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + quality + group + (1|id) + (1|quality)), within="case+group+time", breaks=c(30,50,70, 90 ))
 plot(p_curve_treat)
 ```
 
@@ -518,7 +482,7 @@ data_stack$time = time
 data_stack$group = factor(group, levels = c("gastro", "emergency"))
 
 ### StackOverflow question
-data_ex <- data_stack %>% select(diag_diff_ge_pre, diag_diff_ge_post, id, case, quality, age, experience, autonomy, know_exp, attitude)
+data_ex <- data_stack %>% select(diag_diff_ge_pre, diag_diff_ge_post, id, case, quality, age, experience, autonomy, know_exp, attitude, group)
 
 round_df <- function(df, digits) {
   nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
@@ -531,41 +495,46 @@ round_df <- function(df, digits) {
 data_ex <- round_df(data_ex, digits = 2)
 
 library(lme4)
-data_ex <- structure(list(diag_diff_ge_pre = c(-1.38, -1.38, 1.95, 1.95, 
-1.27, 1.27, -0.34, -0.34, -1.34, -1.34, 0.51, 0.51, 0.59, 0.59, 
-3.46, 3.46, -0.25, -0.25, 0.7, 0.7, 1.19, 1.19, -0.35, -0.35, 
--0.28, -0.28, 0.6, 0.6, 3.7, 3.7, 2.84, 2.84, 1.55, 1.55, 0.06, 
-0.06), diag_diff_ge_post = c(0.09, 0.09, 1.08, 1.08, 4.29, 4.29, 
--2.05, -2.05, 1.01, 1.01, 1.91, 1.91, -0.64, -0.64, 0.79, 0.79, 
--1.57, -1.57, 0.25, 0.25, 0.88, 0.88, -1.59, -1.59, 3.9, 3.9, 
-2.06, 2.06, -1.01, -1.01, 2.05, 2.05, -0.86, -0.86, 1.22, 1.22
-), id = c(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 
-6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6), case = c(1, 
-1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 
-1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3), quality = c(7.28, 
-7.28, 7.28, 7.28, 7.28, 7.28, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 13.12, 
-13.12, 13.12, 13.12, 13.12, 13.12, 7.28, 7.28, 7.28, 7.28, 7.28, 
-7.28, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 13.12, 13.12, 13.12, 13.12, 
-13.12, 13.12), age = c(22, 26, 80, 38, 21, 61, 22, 26, 80, 38, 
-21, 61, 22, 26, 80, 38, 21, 61, 22, 26, 80, 38, 21, 61, 22, 26, 
-80, 38, 21, 61, 22, 26, 80, 38, 21, 61), experience = c(22, 26, 
-80, 38, 21, 61, 22, 26, 80, 38, 21, 61, 22, 26, 80, 38, 21, 61, 
-22, 26, 80, 38, 21, 61, 22, 26, 80, 38, 21, 61, 22, 26, 80, 38, 
-21, 61), autonomy = c(3.17, 2.34, 5.6, 6.26, 3.39, 2.26, 3.17, 
-2.34, 5.6, 6.26, 3.39, 2.26, 3.17, 2.34, 5.6, 6.26, 3.39, 2.26, 
-3.17, 2.34, 5.6, 6.26, 3.39, 2.26, 3.17, 2.34, 5.6, 6.26, 3.39, 
-2.26, 3.17, 2.34, 5.6, 6.26, 3.39, 2.26), know_exp = c(-0.35, 
-2.47, 6.29, 3.74, 2.53, 0.97, -0.35, 2.47, 6.29, 3.74, 2.53, 
-0.97, -0.35, 2.47, 6.29, 3.74, 2.53, 0.97, -0.35, 2.47, 6.29, 
-3.74, 2.53, 0.97, -0.35, 2.47, 6.29, 3.74, 2.53, 0.97, -0.35, 
-2.47, 6.29, 3.74, 2.53, 0.97), attitude = c(2.6, 1.54, 6.19, 
-4.54, 4.18, 1.77, 2.6, 1.54, 6.19, 4.54, 4.18, 1.77, 2.6, 1.54, 
-6.19, 4.54, 4.18, 1.77, 2.6, 1.54, 6.19, 4.54, 4.18, 1.77, 2.6, 
-1.54, 6.19, 4.54, 4.18, 1.77, 2.6, 1.54, 6.19, 4.54, 4.18, 1.77
-)), row.names = c("1", "1.1", "2", "2.1", "3", "3.1", "4", "4.1", 
-"5", "5.1", "6", "6.1", "7", "7.1", "8", "8.1", "9", "9.1", "10", 
-"10.1", "11", "11.1", "12", "12.1", "13", "13.1", "14", "14.1", 
-"15", "15.1", "16", "16.1", "17", "17.1", "18", "18.1"), class = "data.frame")
+data_ex <- structure(list(diag_diff_ge_pre = c(0.26, 0.26, 2.75, 2.75, 1.47, 
+1.47, -1.41, -1.41, -1.92, -1.92, 1.57, 1.57, 0.7, 0.7, 0.56, 
+0.56, 0.33, 0.33, 3.19, 3.19, -2.76, -2.76, 1.7, 1.7, -1.47, 
+-1.47, 2.37, 2.37, 0.88, 0.88, 2.58, 2.58, 0.51, 0.51, -1.08, 
+-1.08), diag_diff_ge_post = c(-0.87, -0.87, -0.81, -0.81, -1.67, 
+-1.67, 0.54, 0.54, -1.41, -1.41, -1.42, -1.42, 0.73, 0.73, 1.03, 
+1.03, -0.4, -0.4, -0.3, -0.3, 0.86, 0.86, -0.43, -0.43, 0.35, 
+0.35, -0.98, -0.98, 1.31, 1.31, 0.96, 0.96, 2.92, 2.92, -0.91, 
+-0.91), id = c(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 
+5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6), 
+    case = c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 
+    3, 3, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
+    3), quality = c(11.06, 11.06, 11.06, 11.06, 11.06, 11.06, 
+    9.08, 9.08, 9.08, 9.08, 9.08, 9.08, 6.33, 6.33, 6.33, 6.33, 
+    6.33, 6.33, 11.06, 11.06, 11.06, 11.06, 11.06, 11.06, 9.08, 
+    9.08, 9.08, 9.08, 9.08, 9.08, 6.33, 6.33, 6.33, 6.33, 6.33, 
+    6.33), age = c(50, 24, 45, 26, 21, 86, 50, 24, 45, 26, 21, 
+    86, 50, 24, 45, 26, 21, 86, 50, 24, 45, 26, 21, 86, 50, 24, 
+    45, 26, 21, 86, 50, 24, 45, 26, 21, 86), experience = c(50, 
+    24, 45, 26, 21, 86, 50, 24, 45, 26, 21, 86, 50, 24, 45, 26, 
+    21, 86, 50, 24, 45, 26, 21, 86, 50, 24, 45, 26, 21, 86, 50, 
+    24, 45, 26, 21, 86), autonomy = c(1.62, 2.27, 3.58, 3.56, 
+    2.77, 3.17, 1.62, 2.27, 3.58, 3.56, 2.77, 3.17, 1.62, 2.27, 
+    3.58, 3.56, 2.77, 3.17, 1.62, 2.27, 3.58, 3.56, 2.77, 3.17, 
+    1.62, 2.27, 3.58, 3.56, 2.77, 3.17, 1.62, 2.27, 3.58, 3.56, 
+    2.77, 3.17), know_exp = c(3.91, 4, 2.94, 1.18, 1.88, 3.26, 
+    3.91, 4, 2.94, 1.18, 1.88, 3.26, 3.91, 4, 2.94, 1.18, 1.88, 
+    3.26, 3.91, 4, 2.94, 1.18, 1.88, 3.26, 3.91, 4, 2.94, 1.18, 
+    1.88, 3.26, 3.91, 4, 2.94, 1.18, 1.88, 3.26), attitude = c(2.14, 
+    2.81, 5.31, 2.07, 2.67, 4.73, 2.14, 2.81, 5.31, 2.07, 2.67, 
+    4.73, 2.14, 2.81, 5.31, 2.07, 2.67, 4.73, 2.14, 2.81, 5.31, 
+    2.07, 2.67, 4.73, 2.14, 2.81, 5.31, 2.07, 2.67, 4.73, 2.14, 
+    2.81, 5.31, 2.07, 2.67, 4.73), group = structure(c(1L, 1L, 
+    1L, 2L, 2L, 2L, 1L, 1L, 1L, 2L, 2L, 2L, 1L, 1L, 1L, 2L, 2L, 
+    2L, 1L, 1L, 1L, 2L, 2L, 2L, 1L, 1L, 1L, 2L, 2L, 2L, 1L, 1L, 
+    1L, 2L, 2L, 2L), levels = c("gastro", "emergency"), class = "factor")), row.names = c("1", 
+"1.1", "2", "2.1", "3", "3.1", "4", "4.1", "5", "5.1", "6", "6.1", 
+"7", "7.1", "8", "8.1", "9", "9.1", "10", "10.1", "11", "11.1", 
+"12", "12.1", "13", "13.1", "14", "14.1", "15", "15.1", "16", 
+"16.1", "17", "17.1", "18", "18.1"), class = "data.frame")
 
 model <- lme4::lmer(diag_diff_ge_post ~ diag_diff_ge_pre + group*time + experience + autonomy + know_exp + attitude + group*quality + (quality|id), data=data_ex)
 model
