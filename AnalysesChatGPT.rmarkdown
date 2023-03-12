@@ -18,11 +18,11 @@ format:
     toc-depth: 3
 ---
 
-
 ```{r analysis-preferences}
 # Seed for random number generation
 set.seed(42)
 ```
+
 
 # Metadata
 
@@ -159,11 +159,14 @@ NA
 
 # Simulation
 
+
 ```{r}
 library(tidyverse)
 ```
 
+
 ## Simulate aggregated data 
+
 
 ```{r}
 library(lavaan)
@@ -272,7 +275,6 @@ attitude <- rep(rep(rnorm(100, 3, 1.5), 10), 2)
 data$attitude <- attitude  
 ```
 
-
 ```{r}
 time <- rep(1:2, each = 1000)
 group <- rep(rep(c("gastro", "emergency"), each = 50), 20)
@@ -293,7 +295,9 @@ data_red <- data %>% filter(time ==2 )
 ```
 
 
+
 ## Create fixed and random effects
+
 
 ```{r}
 
@@ -320,7 +324,9 @@ rand <- list(0.06, 0.04, 0.02, 0.04, 0.03, 0.02)
 res <- 0.79 # residual standard deviation
 ```
 
+
 ## Create the model
+
 
 ```{r}
 #| include: true
@@ -337,7 +343,9 @@ model
 
 ```
 
+
 ## Power analysis
+
 
 ```{r}
 #| include: true
@@ -346,7 +354,6 @@ sim <- powerSim(model, nsim=100, test = fcompare(diag_like_em_post ~ experience 
 
 sim
 ```
-
 
 ```{r}
 ## Add more participants 
@@ -360,14 +367,15 @@ sim_treat_subj
 
 
 
+
 ## Show how power develops depending on participant number (per group)
+
 
 ```{r}
 #| include: true
 p_curve_treat <- powerCurve(model, nsim = 100, test=fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality + time|id)), breaks=c(10, 20, 30, 40,50,60, 70, 80, 90))
 plot(p_curve_treat)
 ```
-
 
 ```{r}
 #| eval: false
@@ -543,7 +551,4 @@ model <- lme4::lmer(diag_diff_ge_post ~ diag_diff_ge_pre + group*time + experien
 model
 
 ```
-
-
-
 
