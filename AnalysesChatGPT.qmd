@@ -313,7 +313,7 @@ fixed <- c(2.5, # intercept of the change score
           0.03 # group * quality effect
           ) 
 
-rand <- list(0.06, 0.04, 0.02, 0.04, 0.03, 0.02)
+rand <- list(0.06, 0.04, 0.19)
   
 #list(0.06, 0.52, 0.43, 0.05299057, 0.03212476, 0.09457272) # Random intercepts and slopes
 
@@ -327,12 +327,12 @@ res <- 0.79 # residual standard deviation
 library(simr)
 library(future)
 
-model <- lmer(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time*group + quality*group + (1 + quality + time|id), data=data)
+model <- lmer(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time*group + quality*group + (1 + quality|id), data=data)
 
 model
 
 # diag_like_em_post = all scores
-model <- makeLmer(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time*group + quality*group + (1 + quality + time|id), fixef=fixed, VarCorr=as.matrix(rand), sigma=res, data=data)
+model <- makeLmer(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time*group + quality*group + (1 + quality|id), fixef=fixed, VarCorr=as.matrix(rand), sigma=res, data=data)
 model
 
 ```
@@ -341,8 +341,7 @@ model
 
 ```{r}
 #| include: true
-sim <- powerSim(model, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality + time|id)))
-
+sim <- powerSim(model, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality|id)))
 
 sim
 ```
@@ -350,11 +349,11 @@ sim
 
 ```{r}
 ## Add more participants 
-#| include: true
+#| eval: false
 model_ext_subj <- extend(model, within="case+group+time", n=100)
 model_ext_subj
 
-sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality + time|id)))
+sim_treat_subj <- powerSim(model_ext_subj, nsim=100, test = fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality|id)))
 sim_treat_subj
 ```
 
@@ -364,7 +363,7 @@ sim_treat_subj
 
 ```{r}
 #| include: true
-p_curve_treat <- powerCurve(model, nsim = 100, test=fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality + time|id)), breaks=c(10, 20, 30, 40,50,60, 70, 80, 90))
+p_curve_treat <- powerCurve(model, nsim = 100, test=fcompare(diag_like_em_post ~ experience + autonomy + know_exp + attitude + time + group + quality + (1 + quality|id)), breaks=c(20, 30, 40, 50, 60))
 plot(p_curve_treat)
 ```
 
